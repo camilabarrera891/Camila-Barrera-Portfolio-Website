@@ -245,6 +245,77 @@
     }
     .contact-link:hover { color: #F3EED7; transform: translateX(4px); }
     .contact-link:focus-visible { outline: 2px solid #E1B4A1; outline-offset: 4px; border-radius: 2px; }
+
+    /* ─── Hamburger button ──────────────────────────────── */
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      z-index: 110;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: #E1B4A1;
+      border-radius: 2px;
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.25s ease;
+    }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* ─── Mobile menu ───────────────────────────────────── */
+    .mobile-menu {
+      display: none;
+      position: absolute;
+      top: 72px;
+      left: 0;
+      right: 0;
+      background: rgba(35,22,8,0.97);
+      border-bottom: 1px solid rgba(225,180,161,0.1);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      padding: 1.5rem 2rem 2rem;
+      flex-direction: column;
+      gap: 1.5rem;
+      z-index: 99;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu .nav-link { font-size: 0.9rem; letter-spacing: 0.1em; }
+
+    /* ─── Responsive ────────────────────────────────────── */
+    @media (max-width: 768px) {
+      /* Nav */
+      .nav-hamburger      { display: flex; }
+      .nav-desktop-links  { display: none !important; }
+
+      /* Sections */
+      #about, #projects, #skills, #contact { padding-top: 5rem !important; padding-bottom: 5rem !important; padding-left: 1.25rem !important; padding-right: 1.25rem !important; }
+
+      /* Hero content */
+      .hero-inner { padding: 4rem 1.25rem !important; }
+      .scroll-hint { display: none !important; }
+
+      /* About — stack to single column */
+      .about-grid { grid-template-columns: 1fr !important; gap: 3rem !important; }
+      .floating-accent-card { right: 0 !important; bottom: -0.75rem !important; }
+
+      /* Projects — full width cards */
+      .projects-grid { grid-template-columns: 1fr !important; }
+      .projects-grid .project-card { grid-column: span 1 !important; }
+
+      /* Skills — stack to single column */
+      .skills-grid { grid-template-columns: 1fr !important; gap: 2rem !important; }
+
+      /* Contact email button — allow wrapping */
+      .email-btn { font-size: 0.7rem !important; padding: 0.875rem 1.25rem !important; word-break: break-all; white-space: normal; text-align: center; }
+    }
   </style>
 </head>
 
@@ -254,20 +325,35 @@
        NAV
   ═══════════════════════════════════════════════ -->
   <header style="position: fixed; top: 0; left: 0; right: 0; z-index: 100; border-bottom: 1px solid rgba(225,180,161,0.08); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); background: rgba(35,22,8,0.85);">
-    <nav style="max-width: 1200px; margin: 0 auto; padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 72px;">
+    <nav style="max-width: 1200px; margin: 0 auto; padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 72px; position: relative;">
       <!-- Logo -->
       <a href="#" aria-label="Camila Barrera — Home" style="display: flex; align-items: center; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'" onfocus="this.style.opacity='0.8'" onblur="this.style.opacity='1'">
         <img src="brand_assets/Website Logo.png" alt="Camila Barrera" style="height: 64px; width: auto;" />
       </a>
 
       <!-- Desktop links -->
-      <div style="display: flex; align-items: center; gap: 2.5rem;">
+      <div class="nav-desktop-links" style="display: flex; align-items: center; gap: 2.5rem;">
         <a href="#about"    class="nav-link">About</a>
         <a href="#projects" class="nav-link">Projects</a>
         <a href="#skills"   class="nav-link">Skills</a>
         <a href="#contact"  class="btn-primary" style="padding: 0.6rem 1.4rem; font-size: 0.7rem;">Say hello</a>
       </div>
+
+      <!-- Hamburger button (mobile only) -->
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
     </nav>
+
+    <!-- Mobile menu -->
+    <div class="mobile-menu" id="mobile-menu" role="navigation" aria-label="Mobile navigation">
+      <a href="#about"    class="nav-link" onclick="closeMobileMenu()">About</a>
+      <a href="#projects" class="nav-link" onclick="closeMobileMenu()">Projects</a>
+      <a href="#skills"   class="nav-link" onclick="closeMobileMenu()">Skills</a>
+      <a href="#contact"  class="btn-primary" style="width: fit-content; padding: 0.75rem 1.75rem; font-size: 0.75rem;" onclick="closeMobileMenu()">Say hello</a>
+    </div>
   </header>
 
 
@@ -285,7 +371,7 @@
     <div class="blob-olive" style="position: absolute; top: 40%;   left: 40%;   width: 40vw; height: 40vw; pointer-events: none;"></div>
 
 
-    <div style="max-width: 1200px; margin: 0 auto; padding: 6rem 2rem; width: 100%; position: relative; z-index: 5; text-align: center;">
+    <div class="hero-inner" style="max-width: 1200px; margin: 0 auto; padding: 6rem 2rem; width: 100%; position: relative; z-index: 5; text-align: center;">
 
       <!-- Label -->
       <div class="section-label fade-up delay-100" style="margin-bottom: 1.5rem;">Making Tech Fun</div>
@@ -312,7 +398,7 @@
       </div>
 
       <!-- Scroll hint -->
-      <div class="fade-up delay-500" style="position: absolute; bottom: 2rem; right: 2rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; opacity: 0.4;">
+      <div class="fade-up delay-500 scroll-hint" style="position: absolute; bottom: 2rem; right: 2rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; opacity: 0.4;">
         <span style="font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: #E1B4A1; writing-mode: vertical-rl; transform: rotate(180deg);">Scroll</span>
         <div style="width: 1px; height: 48px; background: linear-gradient(to bottom, #E1B4A1, transparent);"></div>
       </div>
@@ -327,7 +413,7 @@
   <section id="about" style="position: relative; padding: 8rem 2rem; overflow: hidden;">
     <div class="blob-rose" style="position: absolute; right: -20%; top: 50%; transform: translateY(-50%); width: 50vw; height: 50vw; pointer-events: none;"></div>
 
-    <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; position: relative;">
+    <div class="about-grid" style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; position: relative;">
 
       <!-- Left: text -->
       <div>
@@ -378,7 +464,7 @@
         </div>
 
         <!-- Floating accent card -->
-        <div style="position: absolute; bottom: -1.5rem; right: -1.5rem; background: #4A3222; border: 1px solid rgba(225,180,161,0.15); border-radius: 4px; padding: 1rem 1.25rem; box-shadow: 0 4px 20px rgba(35,22,8,0.5);">
+        <div class="floating-accent-card" style="position: absolute; bottom: -1.5rem; right: -1.5rem; background: #4A3222; border: 1px solid rgba(225,180,161,0.15); border-radius: 4px; padding: 1rem 1.25rem; box-shadow: 0 4px 20px rgba(35,22,8,0.5);">
           <div style="font-size: 0.68rem; color: #808249; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.35rem;">Currently exploring</div>
           <div style="font-family: 'Cormorant Garamond', serif; font-size: 1rem; color: #E1B4A1;">AI & Machine Learning</div>
         </div>
@@ -435,7 +521,7 @@
       </div>
 
       <!-- Grid -->
-      <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 1.5rem;">
+      <div class="projects-grid" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 1.5rem;">
 
         <!-- Card 1 — Goals Bingo App -->
         <div class="project-card" tabindex="0" style="grid-column: span 3;">
@@ -676,7 +762,7 @@
         </h2>
       </div>
 
-      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 4rem;">
+      <div class="skills-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 4rem;">
 
         <!-- Col 1 -->
         <div>
@@ -783,7 +869,7 @@
         Have a project in mind, a question, or just want to say hi? My inbox is always open.
       </p>
 
-      <a href="mailto:camilabarrera891@gmail.com" class="btn-primary" style="font-size: 0.78rem; padding: 1rem 2.5rem; margin-bottom: 3rem;">
+      <a href="mailto:camilabarrera891@gmail.com" class="btn-primary email-btn" style="font-size: 0.78rem; padding: 1rem 2.5rem; margin-bottom: 3rem;">
         camilabarrera891@gmail.com
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>
@@ -851,17 +937,26 @@
       observer.observe(section);
     });
 
-    // Mobile nav: hide links on small screens (basic)
-    function handleResize() {
-      const links = document.querySelectorAll('header nav a:not(:first-child)');
-      if (window.innerWidth < 640) {
-        links.forEach((l, i) => { if (i < 3) l.style.display = 'none'; });
-      } else {
-        links.forEach(l => { l.style.display = ''; });
-      }
+    // Mobile hamburger menu
+    const hamburger = document.getElementById('nav-hamburger');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    hamburger.addEventListener('click', () => {
+      const isOpen = mobileMenu.classList.toggle('open');
+      hamburger.classList.toggle('open', isOpen);
+      hamburger.setAttribute('aria-expanded', isOpen);
+    });
+
+    function closeMobileMenu() {
+      mobileMenu.classList.remove('open');
+      hamburger.classList.remove('open');
+      hamburger.setAttribute('aria-expanded', 'false');
     }
-    handleResize();
-    window.addEventListener('resize', handleResize);
+
+    // Close mobile menu on resize to desktop
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 768) closeMobileMenu();
+    });
   </script>
 
   <!-- ═══════════════════════════════════════════════
